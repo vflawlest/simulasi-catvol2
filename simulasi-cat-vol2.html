@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi CAT Polbangtan 2026 - Set 2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --polbangtan-dark: #1B5E20;
+            --polbangtan-main: #2E7D32;
+            --polbangtan-light: #4CAF50;
+            --bg-color: #F1F8E9;
+            --text-main: #333333;
+            --white: #ffffff;
+            --danger: #e74c3c;
+        }
+
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: var(--bg-color); 
+            margin: 0; 
+            padding: 20px; 
+            color: var(--text-main); 
+        }
+
+        .container { 
+            max-width: 950px; 
+            margin: 0 auto; 
+            background: var(--white); 
+            padding: 40px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(46, 125, 50, 0.15); 
+            border-top: 6px solid var(--polbangtan-dark);
+        }
+
+        h1, h2, h3 { color: var(--polbangtan-dark); text-align: center; }
+        
+        .header-logo { text-align: center; margin-bottom: 20px; }
+        .header-logo span { background: var(--polbangtan-dark); color: white; padding: 10px 20px; border-radius: 30px; font-weight: bold; letter-spacing: 1px; font-size: 1.2em;}
+
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--polbangtan-main);}
+        input, select { width: 100%; padding: 12px; border: 2px solid #C8E6C9; border-radius: 8px; font-size: 16px; font-family: inherit; transition: all 0.3s;}
+        input:focus, select:focus { border-color: var(--polbangtan-light); outline: none; box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);}
+        
+        button { 
+            background-color: var(--polbangtan-main); color: var(--white); 
+            border: none; cursor: pointer; font-weight: bold; 
+            padding: 12px 24px; border-radius: 8px; font-size: 16px; font-family: inherit;
+            transition: all 0.3s ease; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        button:hover:not(:disabled) { 
+            background-color: var(--polbangtan-dark); 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 12px rgba(46, 125, 50, 0.2);
+        }
+        button:disabled { background-color: #bdc3c7; cursor: not-allowed; transform: none; box-shadow: none;}
+        .btn-danger { background-color: var(--danger); }
+        .btn-danger:hover:not(:disabled) { background-color: #c0392b; }
+
+        .header-info { 
+            display: flex; justify-content: space-between; align-items: center;
+            background: #E8F5E9; padding: 15px 25px; border-radius: 10px; 
+            margin-bottom: 30px; border-left: 5px solid var(--polbangtan-main);
+        }
+        .timer { font-size: 1.4em; font-weight: bold; background: var(--polbangtan-dark); color: white; padding: 5px 15px; border-radius: 5px; transition: 0.3s;}
+        .timer.warning { background: var(--danger); animation: pulse 1s infinite; }
+
+        .quiz-layout { display: flex; gap: 30px; flex-wrap: wrap; }
+        .question-section { flex: 3; min-width: 300px; animation: fadeIn 0.4s ease-in-out; }
+        .navigation-section { flex: 1; min-width: 220px; background: #FAFAFA; padding: 20px; border-radius: 10px; border: 1px solid #E0E0E0; height: fit-content;}
+        
+        .question-text { font-size: 1.15em; margin-bottom: 25px; line-height: 1.6; white-space: pre-wrap; }
+        .category-badge { display: inline-block; background: var(--polbangtan-light); color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.85em; font-weight: bold; margin-bottom: 15px; }
+        .option { 
+            display: block; background: #fff; border: 2px solid #E0E0E0; 
+            padding: 15px; margin-bottom: 12px; border-radius: 8px; 
+            cursor: pointer; transition: all 0.2s; position: relative;
+        }
+        .option:hover { border-color: var(--polbangtan-light); background: #F1F8E9; transform: translateX(5px); }
+        .option.selected { background: var(--polbangtan-main); color: white; border-color: var(--polbangtan-dark); transform: translateX(5px); font-weight: 600;}
+        
+        .btn-group { display: flex; justify-content: space-between; margin-top: 30px; gap: 15px;}
+        
+        .grid-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 15px; }
+        .grid-item { 
+            padding: 10px 0; text-align: center; border: 1px solid #ccc; border-radius: 5px; 
+            cursor: pointer; background: white; font-size: 0.9em; transition: 0.2s; font-weight: bold;
+        }
+        .grid-item:hover { background: #E8F5E9; border-color: var(--polbangtan-light); }
+        .grid-item.answered { background: var(--polbangtan-light); color: white; border-color: var(--polbangtan-main); }
+        .grid-item.active { border: 3px solid #FF9800; transform: scale(1.1); box-shadow: 0 0 10px rgba(255, 152, 0, 0.4);}
+
+        .result-item { border-bottom: 1px solid #E0E0E0; padding-bottom: 20px; margin-bottom: 20px; animation: fadeIn 0.5s ease-in-out;}
+        .correct-answer { color: var(--polbangtan-main); font-weight: bold; margin-top: 10px;}
+        .wrong-answer { color: var(--danger); font-weight: bold; }
+        .explanation { background: #F1F8E9; padding: 15px 20px; border-left: 5px solid var(--polbangtan-main); margin-top: 15px; border-radius: 0 8px 8px 0; font-style: italic; line-height: 1.5;}
+        
+        .score-box { background: var(--polbangtan-main); color: white; text-align: center; padding: 30px; border-radius: 10px; margin-bottom: 30px; box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3);}
+        .score-box h1 { color: white; font-size: 3.5em; margin: 10px 0; }
+        
+        .stats-table { width: 100%; border-collapse: collapse; margin-top: 20px; margin-bottom: 30px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);}
+        .stats-table th { background: var(--polbangtan-dark); color: white; padding: 12px; text-align: left; }
+        .stats-table td { padding: 12px; border-bottom: 1px solid #eee; }
+        .stats-table tr:hover { background: #f9f9f9; }
+
+        .hidden { display: none !important; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="login-screen">
+        <div class="header-logo">
+            <span>PORTAL CAT POLBANGTAN</span>
+        </div>
+        <h2>Pendaftaran Simulasi Seleksi Masuk (Set 2)</h2>
+        <p style="text-align: center; color: #666; margin-bottom: 30px;">Silakan lengkapi data diri Anda sebelum memulai tes berbasis komputer (CAT).</p>
+        
+        <div class="form-group"><label>Nama Lengkap</label><input type="text" id="userName" placeholder="Contoh: Budi Santoso"></div>
+        <div class="form-group"><label>Asal Daerah</label><input type="text" id="userRegion" placeholder="Contoh: Jawa Barat"></div>
+        <div class="form-group">
+            <label>Program Studi Pilihan</label>
+            <select id="userProdi">
+                <option value="">-- Silakan Pilih Program Studi --</option>
+                <option value="Penyuluhan Pertanian Berkelanjutan">Penyuluhan Pertanian Berkelanjutan</option>
+                <option value="Penyuluhan Peternakan dan Kesejahteraan Hewan">Penyuluhan Peternakan dan Keswan</option>
+                <option value="Agribisnis Hortikultura">Agribisnis Hortikultura</option>
+            </select>
+        </div>
+        <button style="width: 100%; padding: 15px; font-size: 1.1em; margin-top: 20px;" onclick="startSimulation()">MULAI SIMULASI (90 Menit)</button>
+    </div>
+
+    <div id="quiz-screen" class="hidden">
+        <div class="header-info">
+            <div>
+                <strong style="color: var(--polbangtan-dark); font-size: 1.2em;" id="participant-name"></strong><br>
+                <span id="participant-prodi" style="color: #666; font-size: 0.9em;"></span>
+            </div>
+            <div class="timer" id="timer-display">90:00</div>
+        </div>
+        
+        <div class="quiz-layout">
+            <div class="question-section" id="q-animator">
+                <span id="q-category" class="category-badge"></span>
+                <div class="question-text"><strong id="q-number" style="color: var(--polbangtan-main);"></strong> <span id="q-text"></span></div>
+                <div id="options-container"></div>
+                
+                <div class="btn-group">
+                    <button onclick="prevQuestion()" id="btn-prev" style="background-color: #7f8c8d;">&laquo; Soal Sebelumnya</button>
+                    <button onclick="nextQuestion()" id="btn-next">Soal Selanjutnya &raquo;</button>
+                </div>
+            </div>
+            
+            <div class="navigation-section">
+                <div style="text-align: center; font-weight: bold; margin-bottom: 15px; color: var(--polbangtan-dark); border-bottom: 2px solid #E0E0E0; padding-bottom: 10px;">Peta Soal</div>
+                <div class="grid-container" id="question-grid"></div>
+                <button class="btn-danger" style="width: 100%; margin-top: 25px;" onclick="confirmSubmit()">Selesai Ujian</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen" class="hidden">
+        <div class="header-logo"><span>HASIL SIMULASI CAT</span></div>
+        
+        <div class="score-box">
+            <h3 style="color: white; margin: 0; font-weight: normal;">Skor Akhir Anda</h3>
+            <h1 id="final-score-text">0</h1>
+            <p style="margin:0; opacity: 0.9;">Passing Grade disesuaikan dengan kuota masing-masing prodi.</p>
+        </div>
+
+        <h3 style="text-align: left; border-bottom: 2px solid var(--polbangtan-main); padding-bottom: 10px;">Rincian Kinerja per Subtes</h3>
+        <table class="stats-table">
+            <thead>
+                <tr>
+                    <th>Kategori Subtes</th>
+                    <th>Jumlah Soal</th>
+                    <th>Jawaban Benar</th>
+                    <th>Akurasi</th>
+                </tr>
+            </thead>
+            <tbody id="stats-table-body"></tbody>
+        </table>
+
+        <h3 style="text-align: left; border-bottom: 2px solid var(--polbangtan-main); padding-bottom: 10px; margin-top: 40px;">Kunci Jawaban & Pembahasan Lengkap</h3>
+        <div id="review-container"></div>
+        <button style="width: 100%; padding: 15px; margin-top: 30px; font-size: 1.1em;" onclick="location.reload()">KEMBALI KE BERANDA (COBA LAGI)</button>
+    </div>
+</div>
+
+<script>
+    // DATABASE SOAL DARI DOKUMEN (45 Soal berurutan)
+    const sourceQuestions = [
+        // --- TEKNIS PERTANIAN ---
+        { c:"TEKNIS PERTANIAN", q:"Metode budidaya hidroponik yang memanfaatkan prinsip bejana berhubungan dengan mengalirkan larutan nutrisi ke media tanam secara berkala, lalu menyurutkannya kembali ke tangki penampung secara otomatis dinamakan sistem...", o:["A. Nutrient Film Technique (NFT)","B. Deep Flow Technique (DFT)","C. Ebb and Flow (Pasang Surut)","D. Column Culture"], a:2, e:"Sistem hidroponik Ebb and Flow (Pasang Surut) bekerja secara otomatis mengalirkan larutan nutrisi membanjiri perakaran media dalam durasi tertentu (pasang), lalu menyurutkannya kembali memanfaatkan gravitasi." },
+        { c:"TEKNIS PERTANIAN", q:"Serangga dari ordo Lepidoptera merupakan salah satu golongan hama yang paling merugikan pada pertanian tanaman pangan and hortikultura. Fase hidup dari ordo ini yang aktif merusak jaringan tanaman adalah...", o:["A. Imago (Serangga dewasa)","B. Larva (Ulat)","C. Pupa (Kepompong)","D. Telur steril"], a:1, e:"Pada kelompok serangga bermetamorfosis sempurna seperti ordo Lepidoptera (kupu/ngengat), fase larva atau ulat memiliki alat mulut bertipe menggigit-mengunyah yang bertindak aktif merusak merobek jaringan daun tanaman." },
+        { c:"TEKNIS PERTANIAN", q:"Pemasangan ajir atau bahan penopang pada tanaman sayuran buah seperti tomat dan cabai memiliki fungsi teknis yang sangat penting, yaitu...", o:["A. Mencegah penguapan unsur nitrogen dari pupuk urea","B. Menjaga tanaman agar tidak roboh serta mempermudah penetrasi cahaya dan pengendalian iklim mikro","C. Menurunkan tingkat keasaman (pH) tanah di bedengan","D. Mempercepat proses diferensiasi sel sperma tumbuhan"], a:1, e:"Ajir penopang berfungsi mempertahankan fisik tanaman tetap tegak, memperlancar sirkulasi udara mikro, serta mempermudah penetrasi paparan cahaya matahari." },
+        { c:"TEKNIS PERTANIAN", q:"Senyawa Kalium Permanganat (KMnO4) sering diaplikasikan dalam teknologi pascapanen komoditas hortikultura buah. Fungsi utama dari penggunaan senyawa tersebut adalah...", o:["A. Meningkatkan kadar sisa oksigen di dalam kemasan","B. Menyerap gas etilen untuk memperpanjang daya simpan produk","C. Mempercepat perubahan warna buah agar tampak matang","D. Menggumpalkan kandungan kasein dan albumin buah"], a:1, e:"Kalium Permanganat (KMnO4) berperan aktif sebagai zat oksidator kuat yang menyerap akumulasi gas etilen, sehingga menekan laju pematangan dini buah." },
+        { c:"TEKNIS PERTANIAN", q:"Bahan organik yang ditambahkan ke dalam tanah pertanian memiliki peranan multidimensi bagi pertumbuhan vegetatif tanaman. Peranan fisik utamanya adalah...", o:["A. Menurunkan kapasitas tukar kation tanah secara drastis","B. Memperbaiki struktur tanah, meningkatkan aerasi, dan kapasitas retensi air","C. Menaikkan tingkat kemasaman tanah hingga pH di bawah 4.0","D. Menghentikan laju respirasi akar tanaman di sawah"], a:1, e:"Bahan organik memperbaiki granulasi tanah, meningkatkan porositas udara tanah (aerasi), serta memperkuat kapasitas retensi daya ikat air." },
+        { c:"TEKNIS PERTANIAN", q:"Untuk menurunkan tingkat keasaman tanah pertanian yang terlalu tinggi (pH rendah) agar menjadi netral dan sesuai untuk pertumbuhan sayuran, bahan kimia tanah yang harus diaplikasikan adalah...", o:["A. Belerang murni (Sulfur)","B. Kapur pertanian atau Dolomit","C. Pupuk Amonium Sulfat (ZA)","D. Asam klorida encer"], a:1, e:"Pemberian kapur pertanian (CaCO3) atau kalsit/dolomit berfungsi menetralisir kelebihan ion hidrogen bebas, menaikkan pH tanah dari masam menuju batas netral." },
+        { c:"TEKNIS PERTANIAN", q:"Bagian dari organ reproduksi betina (pistil) pada bunga tanaman hortikultura yang memiliki struktur memanjang berbentuk tabung sebagai jalan masuknya tabung polen menuju ovarium dinamakan...", o:["A. Stigma (Kepala putik)","B. Stilus (Tangkai putik)","C. Ovari (Bakal buah)","D. Ovul (Bakal biji)"], a:1, e:"Stilus atau tangkai putik merupakan organ saluran silinder yang menghubungkan bagian kepala putik (stigma) menuju ovarium (bakal buah)." },
+        { c:"TEKNIS PERTANIAN", q:"Pada teknik menyambung (grafting) tanaman buah, bagian tanaman yang dipilih dan digunakan sebagai batang bawah (rootstock) sebaiknya berasal dari tanaman hasil...", o:["A. Stek pucuk yang diberi auksin","B. Perbanyakan generatif menggunakan biji karena memiliki sistem perakaran tunggang yang kuat","C. Cangkokan dari induk yang sudah tua","D. Kultur jaringan fase subkultur kedua"], a:1, e:"Batang bawah wajib memiliki sistem penjangkaran akar yang kokoh. Hal ini dipenuhi oleh perakaran tunggang dari jalur pembiakan biji." },
+        { c:"TEKNIS PERTANIAN", q:"Jenis zat pengatur tumbuh (ZPT) alami maupun buatan yang diaplikasikan pascapanen untuk memicu akumulasi gula dan mempercepat proses pematangan buah hortikultura adalah...", o:["A. Auksin","B. Giberelin","C. Etilen","D. Sitokinin"], a:2, e:"Gas etilen secara aktif memicu degradasi klorofil, hidrolisis pati menjadi zat gula, dan mempercepat kematangan buah." },
+        { c:"TEKNIS PERTANIAN", q:"Pengolahan tanah menggunakan traktor tangan dengan pola bajak di mana pembalikan tanah dilakukan rapat dan bolak-balik secara konsisten menghasilkan alur olah yang rapi disebut...", o:["A. Pola tengah","B. Pola luar","C. Pola bolak-balik rapat","D. Pola keliling tepi"], a:2, e:"Berdasarkan data mekanis alat mesin pertanian, pola pembajakan berkelanjutan bolak-balik yang saling merapat disebut pola bolak-balik rapat." },
+
+        // --- BAHASA INGGRIS ---
+        { c:"BAHASA INGGRIS", q:"After attending an intensive seminar on agrotechnology, Amanda pledged herself ... an organic farmer after graduating from college.", o:["A. become","B. to become","C. became","D. becoming"], a:1, e:"Frasa kerja 'pledge oneself' wajib diikuti oleh bentuk to-infinitive (to + Verb 1)." },
+        { c:"BAHASA INGGRIS", q:"Many agronomists cultivate cover crops ... prevent soil erosion during the heavy monsoon rains.", o:["A. so as to","B. since","C. as","D. in the term of"], a:0, e:"Kalimat ini membutuhkan kata hubung tujuan (adverb of purpose). 'so as to' memiliki arti 'agar' dan tepat diikuti Verb 1." },
+        { c:"BAHASA INGGRIS", q:"On the top shelf of the researcher's cabinet ... which he received from the international botanical exhibition.", o:["A. where a gold medal sits","B. sits a gold medal","C. a gold medal sits","D. a gold medal does sit"], a:1, e:"Pola Inversion karena diawali keterangan tempat yang panjang: Keterangan Tempat + Verb + Subject." },
+        { c:"BAHASA INGGRIS", q:"The ... dedicated to hydroponic nutrient calculations was published last year by Dr. Ewing.", o:["A. first Indonesian agricultural pamphlet","B. Indonesian first agricultural pamphlet","C. agricultural first Indonesian pamphlet","D. first agricultural Indonesian pamphlet"], a:0, e:"Urutan baku: Ordinal (first) + Origin (Indonesian) + Purpose (agricultural) + Noun (pamphlet)." },
+        { c:"BAHASA INGGRIS", q:"It is not easy to manage sustainable forestry in remote areas where ... no adequate infrastructure connecting the sectors.", o:["A. it is","B. there is","C. that is","D. it is there that"], a:1, e:"Menggunakan subjek semu (Expletive) 'there is' untuk kata benda tak terhitung tunggal ('no adequate infrastructure')." },
+        { c:"BAHASA INGGRIS", q:"Muktar’s flight from Amsterdam to London was delayed ... the volcanic ash cloud.", o:["A. as result","B. owing to","C. because","D. instead of"], a:1, e:"Kata hubung sebab-akibat diikuti Noun Phrase menggunakan preposisi seperti 'owing to' (disebabkan oleh)." },
+        { c:"BAHASA INGGRIS", q:"The ten-year-old boy knows so many scientific ... of plants that he easily won the botanical quiz.", o:["A. terminology","B. terminologies","C. terminologist","D. terminologically"], a:1, e:"Penunjuk kuantitas 'so many' wajib diikuti kata benda jamak. Bentuk jamak dari terminology adalah terminologies." },
+        { c:"BAHASA INGGRIS", q:"The field workers do not know ... the tractor after they had finished plowing the fields.", o:["A. where did they park","B. where they parked","C. where have they parked","D. where they did park"], a:1, e:"Noun Clause sebagai objek tidak menggunakan pola kalimat tanya, melainkan pola berita: Subject + Verb ('where they parked')." },
+        { c:"BAHASA INGGRIS", q:"A recent study found that highly productive agronomists had rather ... superior organic compost than chemical alternatives.", o:["A. buying","B. buy","C. to buy","D. bought"], a:1, e:"Frasa 'had rather' (lebih memilih) wajib diikuti kata kerja dasar/Bare Infinitive ('buy')." },
+        { c:"BAHASA INGGRIS", q:"... to monitor the plant growth regularly, the experiment would have yielded more accurate scientific data.", o:["A. Had the researcher remembered","B. If the researcher remembered","C. If the researcher remembers","D. Had the researcher would help him"], a:0, e:"Conditional Sentence Type 3 inversi membuang 'if' dan memajukan 'Had' sebelum Subject." },
+
+        // --- KEWIRAUSAHAAN ---
+        { c:"KEWIRAUSAHAAN", q:"Kelayakan finansial sebuah investasi usaha tani dapat diukur menggunakan rasio R/C (Revenue-Cost Ratio). Jika dari hasil analisis diperoleh nilai R/C sebesar 1,5, artinya...", o:["A. Usaha mengalami kerugian karena biaya lebih besar dari penerimaan","B. Setiap pengeluaran biaya sebesar Rp1.000,00 akan menghasilkan penerimaan Rp1.500,00","C. Usaha berada pada titik impas (tidak untung dan tidak rugi)","D. Keuntungan bersih yang diperoleh pengusaha adalah 150% dari modal"], a:1, e:"Angka 1,5 mengindikasikan setiap Rp1,00 biaya yang dikorbankan akan menghasilkan Rp1,5 penerimaan kotor." },
+        { c:"KEWIRAUSAHAAN", q:"Kegiatan sortasi dan grading pada produk hortikultura pascapanen memegang peranan penting dalam subsistem pemasaran agribisnis. Tujuan utama dari tindakan tersebut adalah...", o:["A. Meningkatkan kadar air di dalam produk agar tampak segar","B. Mempercepat proses pembusukan alami secara seragam","C. Mengelompokkan produk berdasarkan keseragaman ukuran dan standar mutu pasar","D. Menambah bobot total produk secara signifikan"], a:2, e:"Grading membagi produk ke kelas mutu pasar berdasarkan keseragaman ukuran, bentuk, dan berat demi standardisasi." },
+        { c:"KEWIRAUSAHAAN", q:"Strategi pemasaran produk pangan organik yang menekankan pada segmentasi pasar kalangan menengah ke atas yang peduli kesehatan merupakan penerapan fungsi manajemen berupa...", o:["A. Perencanaan (Planning)","B. Pengorganisasian (Organizing)","C. Pengarahan (Actuating)","D. Pengawasan (Controlling)"], a:0, e:"Penentuan target segmentasi pasar konsumen dilakukan pada tahap Perencanaan (Planning) operasional bisnis." },
+        { c:"KEWIRAUSAHAAN", q:"Kemitraan antara petani kecil dengan perusahaan skala besar (inti-plasma) dalam kewirausahaan agribisnis bertujuan untuk mengatasi kelemahan utama petani tradisional, yaitu...", o:["A. Kelebihan pasokan tenaga kerja di pedesaan","B. Keterbatasan akses modal, teknologi modern, dan kepastian pasar","C. Kurangnya minat petani dalam memperluas varietas lokal","D. Ketergantungan terhadap pupuk organik buatan sendiri"], a:1, e:"Pola inti-plasma menjembatani kelemahan petani dalam pasokan modal, asupan alsintan modern, dan jaminan pasar hasil panen." },
+        { c:"KEWIRAUSAHAAN", q:"Suatu usaha peternakan bebek petelur mengeluarkan biaya tetap Rp3.000.000,00 dan biaya variabel Rp2.000,00 per butir telur. Jika harga jual telur bebek di pasar adalah Rp3.500,00 per butir, berapakah Break Even Point (BEP) dalam satuan unit (butir)?", o:["A. 1.000 butir","B. 1.500 butir","C. 2.000 butir","D. 3.000 butir"], a:2, e:"BEP = Rp3.000.000,00 / (Rp3.500,00 - Rp2.000,00) = 2.000 butir." },
+        { c:"KEWIRAUSAHAAN", q:"Wirausahawan pertanian yang memanfaatkan platform digital (e-commerce) untuk menjual hasil panennya secara langsung kepada konsumen akhir (end-user) menerapkan sistem rantai pasok pemasaran...", o:["A. Saluran pemasaran tingkat dua","B. Saluran pemasaran tingkat tiga","C. Saluran pemasaran langsung (tingkat nol)","D. Saluran pemasaran tidak langsung"], a:2, e:"Saluran tingkat nol (direct marketing) dicirikan oleh rantai pasok tanpa perantara langsung ke tangan konsumen." },
+        { c:"KEWIRAUSAHAAN", q:"Risiko usaha pertanian yang disebabkan oleh faktor alam yang tidak menentu seperti curah hujan ekstrem, kekeringan, dan serangan hama endemik dikelompokkan ke dalam...", o:["A. Risiko pasar (market risk)","B. Risiko produksi (production risk)","C. Risiko finansial (financial risk)","D. Risiko institusional (institutional risk)"], a:1, e:"Risiko produksi mencakup segala ketidakpastian alamiah dalam siklus budi daya yang mengakibatkan fluktuasi hasil panen." },
+        { c:"KEWIRAUSAHAAN", q:"Salah satu karakteristik utama komoditas hortikultura yang membedakannya dengan komoditas industri manufaktur adalah sifat produksinya yang musiman (seasonal). Dampak ekonomi dari sifat musiman ini terhadap pasar adalah...", o:["A. Ketersediaan barang di pasar selalu konsisten sepanjang tahun","B. Fluktuasi harga barang yang sangat tajam antara musim panen dan luar musim","C. Penurunan daya beli konsumen secara permanen","D. Standar mutu barang yang tidak pernah berubah"], a:1, e:"Saat musim panen, stok melimpah (harga jatuh). Saat luar musim (off-season), barang langka (lonjakan harga tajam)." },
+        { c:"KEWIRAUSAHAAN", q:"Dokumen tertulis yang memuat rencana operasional, analisis pasar, strategi pemasaran, serta proyeksi keuangan usaha peternakan yang diajukan kepada investor atau lembaga keuangan disebut...", o:["A. Jurnal keuangan","B. Proposal penelitian tanaman","C. Rencana bisnis (Business Plan)","D. Nota kesepahaman (MoU)"], a:2, e:"Business Plan menggambarkan kesiapan operasional dan kelayakan finansial usaha guna menarik pendanaan." },
+        { c:"KEWIRAUSAHAAN", q:"Dalam analisis SWOT usaha agroindustri keripik singkong, regulasi pemerintah yang mempermudah izin edar produk pangan industri rumah tangga (PIRT) dikategorikan sebagai...", o:["A. Strength (Kekuatan)","B. Weakness (Kelemahan)","C. Opportunity (Peluang)","D. Threat (Ancaman)"], a:2, e:"Regulasi yang menguntungkan dari pihak eksternal membuka peluang bagi ekspansi, sehingga termasuk Opportunity (Peluang)." },
+        { c:"KEWIRAUSAHAAN", q:"Mengapa inovasi produk kemasan (misalnya pengemasan sayuran daun menggunakan plastik kedap udara atau vakum) bernilai penting bagi wirausahawan hortikultura?", o:["A. Karena kemasan tersebut dapat mempersingkat umur simpan sayuran","B. Karena menekan laju respirasi, menjaga kesegaran, dan menaikkan nilai jual produk","C. Karena mempermudah konsumen untuk memasak sayuran langsung tanpa dicuci","D. Karena menghilangkan kebutuhan zat hara mikro pada tanaman"], a:1, e:"Kemasan kedap udara membatasi oksigen berlebih, memperlambat pembusukan, menjaga kadar air, serta menaikkan nilai jual produk." },
+        { c:"KEWIRAUSAHAAN", q:"Perhatikan komponen biaya berikut:\n1. Sewa lahan pertanian per tahun\n2. Pembelian benih tanaman\n3. Penyusutan alat traktor tangan\n4. Upah harian buruh panen\nKomponen biaya di atas yang termasuk ke dalam struktur biaya tetap (fixed cost) ditunjukkan oleh nomor...", o:["A. 1 dan 2","B. 1 dan 3","C. 2 dan 4","D. 3 dan 4"], a:1, e:"Biaya sewa lahan tahunan dan penyusutan traktor besarnya tidak berubah walau volume panen berfluktuasi (Biaya Tetap)." },
+        { c:"KEWIRAUSAHAAN", q:"Keuntungan bersih yang diperoleh dari sebuah usaha agribisnis dihitung dengan cara...", o:["A. Mengalikan total kuantitas produksi dengan harga jual per unit","B. Mengurangi total penerimaan kotor (total revenue) dengan total biaya (total cost)","C. Membagi total biaya tetap dengan margin kontribusi per unit produk","D. Menjumlahkan modal investasi dengan seluruh biaya variabel operasional"], a:1, e:"Keuntungan bersih = Total penerimaan kotor (omzet) - seluruh total pengeluaran operasional usaha." },
+        { c:"KEWIRAUSAHAAN", q:"Permintaan masyarakat terhadap telur dan daging unggas yang melonjak tajam menjelang hari raya keagamaan merupakan peluang pasar yang didorong oleh faktor...", o:["A. Perkembangan inovasi teknologi budi daya","B. Perubahan kebijakan makro pemerintah","C. Fluktuasi sosial budaya dan pola konsumsi masyarakat","D. Penurunan biaya sapronak secara global"], a:2, e:"Lonjakan pangan menjelang hari besar dipicu oleh dinamika tradisi sosial budaya dan pola konsumsi musiman masyarakat." },
+        { c:"KEWIRAUSAHAAN", q:"Penggunaan merek dagang (branding) dan logo khusus pada kemasan beras premium hasil produksi kelompok tani bertujuan untuk...", o:["A. Memenuhi standar teknis penyiapan media tanam di sawah","B. Membedakan produk kelompok tani dengan kompetitor dan membangun loyalitas konsumen","C. Mengurangi beban pajak penjualan hasil pertanian dari pemerintah","D. Mempercepat proses penggilingan padi di pabrik"], a:1, e:"Branding membedakan barang dari kompetitor, menjamin mutu, dan membangun loyalitas pasar jangka panjang." },
+
+        // --- MATEMATIKA ---
+        { c:"MATEMATIKA", q:"Jika a < 5b dan b < 2c dengan a, b, c merupakan bilangan bulat positif, hubungan ketidaksamaan yang mutlak benar adalah...", o:["A. a < 10c","B. a > 10c","C. a = 10c","D. a < 7c","E. Hubungan a dan c tidak dapat ditentukan"], a:0, e:"Karena b < 2c, kalikan 5 didapat 5b < 10c. Jadi, a < 5b < 10c, sehingga mutlak a < 10c." },
+        { c:"MATEMATIKA", q:"Persamaan kuadrat x^2 - 6x + 8 = 0 memiliki akar-akar x_1 dan x_2. Persamaan kuadrat baru yang akar-akarnya adalah 2x_1 dan 2x_2 berbentuk...", o:["A. x^2 - 12x + 16 = 0","B. x^2 - 12x + 32 = 0","C. x^2 - 6x + 32 = 0","D. x^2 - 12x + 24 = 0","E. x^2 - 24x + 32 = 0"], a:1, e:"Substitusi x = y/2 ke x^2 - 6x + 8 = 0 menjadi y^2/4 - 3y + 8 = 0. Kalikan 4 menjadi x^2 - 12x + 32 = 0." },
+        { c:"MATEMATIKA", q:"Jika x = akar(4444) dan y = 66, maka pernyataan hubungan kuantitatif yang tepat di bawah ini adalah...", o:["A. x > y","B. x < y","C. x = y","D. x^2 < y","E. Hubungan tidak dapat ditentukan"], a:0, e:"Kuadratkan keduanya: x^2 = 4444 dan y^2 = 66^2 = 4356. Karena 4444 > 4356, maka x > y." },
+        { c:"MATEMATIKA", q:"Jika selisih a - b = 3 dan hasil operasi a^2 - b^2 = 21, maka nilai penjumlahan dari a + b adalah...", o:["A. 5","B. 6","C. 7","D. 8","E. 9"], a:2, e:"Rumus a^2 - b^2 = (a - b)(a + b). Maka 21 = 3 * (a + b), sehingga a + b = 21 / 3 = 7." },
+        { c:"MATEMATIKA", q:"Nilai dari operasi bilangan riil berikut (99^2 - 1) / 98 adalah...", o:["A. 98","B. 99","C. 100","D. 101","E. 102"], a:2, e:"Bentuk (99^2 - 1^2) / 98 = ((99 - 1)(99 + 1)) / 98 = (98 * 100) / 98 = 100." },
+        { c:"MATEMATIKA", q:"Gani membeli jaket dengan skema diskon ganda bertingkat 30% + 10%. Jika harga awal jaket tertulis Rp500.000,00, berapakah harga riil akhir yang harus dibayar Gani?", o:["A. Rp300.000,00","B. Rp315.000,00","C. Rp325.000,00","D. Rp350.000,00","E. Rp385.000,00"], a:1, e:"Harga setelah 30% = Rp350.000. Diskon kedua 10% dari Rp350.000 = Rp35.000. Harga Akhir = Rp350.000 - Rp35.000 = Rp315.000." },
+        { c:"MATEMATIKA", q:"Seorang pedagang membeli 50 kg jeruk seharga Rp600.000,00. Jika 10 kg jeruk membusuk sehingga tidak layak dijual, dan sisanya berhasil dijual dengan harga Rp18.000,00 per kg, kondisi keuangan yang dialami pedagang tersebut adalah...", o:["A. Keuntungan 20%","B. Kerugian 20%","C. Keuntungan 15%","D. Kerugian 10%","E. Keuntungan 10%"], a:0, e:"Sisa jual = 40 kg. Pendapatan = 40 kg x Rp18.000 = Rp720.000. Untung = Rp120.000. Persentase = (120.000/600.000) * 100% = 20%." },
+        { c:"MATEMATIKA", q:"Di sebuah green house toko tanaman, tinggi sebatang bibit pohon mangga bertambah secara konsisten sebesar 5% setiap minggu dari tinggi minggu sebelumnya. Jika tinggi awal bibit tersebut adalah 80 cm, berapakah tingginya setelah berjalan 2 minggu?", o:["A. 88 cm","B. 88,2 cm","C. 89 cm","D. 89,2 cm","E. 90 cm"], a:1, e:"Minggu 1: Tambah 5% dari 80cm = 4cm (Tinggi jadi 84cm). Minggu 2: Tambah 5% dari 84cm = 4,2cm (Tinggi akhir 88,2cm)." },
+        { c:"MATEMATIKA", q:"Developer properti memasarkan total 60 unit rumah yang terdiri atas Tipe A dan Tipe B. Jika kuantitas Tipe A sama dengan 2/3 dari kuantitas Tipe B, berapakah jumlah unit rumah Tipe B yang dipasarkan?", o:["A. 24 unit","B. 30 unit","C. 36 unit","D. 40 unit","E. 45 unit"], a:2, e:"A + B = 60 => (2/3)B + B = 60 => (5/3)B = 60. Maka B = 60 * 3/5 = 36 unit." },
+        { c:"MATEMATIKA", q:"Dari sejumlah peserta seleksi beasiswa, 80% dinyatakan lulus tahapan administrasi. Dari peserta lulus administrasi tersebut, hanya 1/4 bagian yang dinyatakan lulus tes tertulis CAT dan diterima. Jika total mahasiswa diterima adalah 40 orang, jumlah total pendaftar awal adalah...", o:["A. 160 orang","B. 200 orang","C. 240 orang","D. 250 orang","E. 300 orang"], a:1, e:"Lulus tes tertulis = 1/4 * 80% P = 20% P = 0,2P. Karena diterima 40 orang, maka 0,2P = 40, sehingga P = 200 orang." }
+    ];
+
+    // Menghapus perintah Math.random() agar soal tampil berurutan
+    let questions = [...sourceQuestions]; 
+    let userAnswers = [];
+    let currentIndex = 0;
+    let timerInterval;
+    let timeLeft = 90 * 60; 
+
+    function startSimulation() {
+        const name = document.getElementById('userName').value;
+        const region = document.getElementById('userRegion').value;
+        const prodi = document.getElementById('userProdi').value;
+
+        if (!name || !region || !prodi) return alert("Peringatan: Harap lengkapi Formulir Pendaftaran terlebih dahulu!");
+
+        document.getElementById('participant-name').innerText = name.toUpperCase();
+        document.getElementById('participant-prodi').innerText = `Asal: ${region} | Prodi: ${prodi}`;
+        
+        userAnswers = new Array(questions.length).fill(null);
+
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+
+        renderGrid();
+        loadQuestion();
+        startTimer();
+    }
+
+    function startTimer() {
+        const timerDisplay = document.getElementById('timer-display');
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            let mins = Math.floor(timeLeft / 60);
+            let secs = timeLeft % 60;
+            timerDisplay.innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+            
+            if (timeLeft <= 600) timerDisplay.classList.add('warning');
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                alert("WAKTU HABIS! Sistem akan mengumpulkan lembar jawaban Anda secara otomatis.");
+                showResults();
+            }
+        }, 1000);
+    }
+
+    function triggerFadeAnimation() {
+        const section = document.getElementById('q-animator');
+        section.style.animation = 'none';
+        section.offsetHeight;
+        section.style.animation = 'fadeIn 0.4s ease-in-out';
+    }
+
+    function loadQuestion() {
+        triggerFadeAnimation();
+        const q = questions[currentIndex];
+        document.getElementById('q-category').innerText = q.c;
+        document.getElementById('q-number').innerText = `Soal ${currentIndex + 1} / ${questions.length}.`;
+        document.getElementById('q-text').innerText = q.q;
+
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+        q.o.forEach((opt, idx) => {
+            const btn = document.createElement('div');
+            btn.className = 'option';
+            if (userAnswers[currentIndex] === idx) btn.classList.add('selected');
+            btn.innerText = opt;
+            btn.onclick = () => { 
+                userAnswers[currentIndex] = idx; 
+                loadQuestion();
+                renderGrid(); 
+            };
+            container.appendChild(btn);
+        });
+
+        document.getElementById('btn-prev').disabled = currentIndex === 0;
+        document.getElementById('btn-next').disabled = currentIndex === questions.length - 1;
+        updateGridHighlight();
+    }
+
+    function nextQuestion() { if (currentIndex < questions.length - 1) { currentIndex++; loadQuestion(); } }
+    function prevQuestion() { if (currentIndex > 0) { currentIndex--; loadQuestion(); } }
+    
+    function renderGrid() {
+        const grid = document.getElementById('question-grid');
+        grid.innerHTML = '';
+        questions.forEach((_, idx) => {
+            const box = document.createElement('div');
+            box.className = 'grid-item';
+            box.innerText = idx + 1;
+            if (userAnswers[idx] !== null) box.classList.add('answered');
+            box.onclick = () => { currentIndex = idx; loadQuestion(); };
+            grid.appendChild(box);
+        });
+        updateGridHighlight();
+    }
+
+    function updateGridHighlight() {
+        document.querySelectorAll('.grid-item').forEach((box, idx) => {
+            idx === currentIndex ? box.classList.add('active') : box.classList.remove('active');
+        });
+    }
+
+    function confirmSubmit() {
+        const kosong = userAnswers.filter(a => a === null).length;
+        let pesan = kosong > 0 ? `PERINGATAN: Terdapat ${kosong} soal yang BELUM DIJAWAB.\n\nApakah Anda yakin ingin menyelesaikan ujian sekarang?` : "Apakah Anda yakin ingin mengumpulkan lembar jawaban?";
+        if (confirm(pesan)) {
+            clearInterval(timerInterval); 
+            showResults();
+        }
+    }
+
+    function showResults() {
+        document.getElementById('quiz-screen').classList.add('hidden');
+        document.getElementById('result-screen').classList.remove('hidden');
+        window.scrollTo(0,0);
+
+        let totalBenar = 0;
+        let kategoriStats = {};
+        const container = document.getElementById('review-container');
+        
+        questions.forEach((q, i) => {
+            if(!kategoriStats[q.c]) kategoriStats[q.c] = { total: 0, benar: 0 };
+            kategoriStats[q.c].total++;
+
+            let isBenar = userAnswers[i] === q.a;
+            if (isBenar) {
+                totalBenar++;
+                kategoriStats[q.c].benar++;
+            }
+            
+            let textJawab = userAnswers[i] !== null ? q.o[userAnswers[i]] : "<span style='color: #95a5a6;'>Tidak ada jawaban (Kosong)</span>";
+            
+            container.innerHTML += `
+                <div class="result-item">
+                    <div style="font-size: 1.1em; color: var(--text-main);"><b>${i+1}. ${q.q}</b></div>
+                    <div class="category-badge" style="margin-top: 10px;">${q.c}</div>
+                    <div style="margin-top: 10px;">Jawaban Anda: <span class="${isBenar ? 'correct-answer' : 'wrong-answer'}">${textJawab}</span></div>
+                    ${!isBenar ? `<div class="correct-answer">Kunci Jawaban: ${q.o[q.a]}</div>` : ''}
+                    <div class="explanation"><b>Pembahasan:</b><br> ${q.e}</div>
+                </div>`;
+        });
+
+        // Formula Penilaian Dinamis Menyesuaikan Jumlah Soal (Skala 100)
+        let nilaiAkhir = (totalBenar / questions.length) * 100;
+        document.getElementById('final-score-text').innerText = nilaiAkhir.toFixed(2);
+
+        const tableBody = document.getElementById('stats-table-body');
+        for (let kat in kategoriStats) {
+            let data = kategoriStats[kat];
+            let akurasi = ((data.benar / data.total) * 100).toFixed(0);
+            tableBody.innerHTML += `
+                <tr>
+                    <td style="font-weight: bold;">${kat}</td>
+                    <td>${data.total}</td>
+                    <td style="color: var(--polbangtan-main); font-weight: bold;">${data.benar}</td>
+                    <td>${akurasi}%</td>
+                </tr>
+            `;
+        }
+    }
+</script>
+</body>
+</html>
